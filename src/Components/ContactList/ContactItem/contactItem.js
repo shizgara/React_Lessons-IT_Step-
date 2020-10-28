@@ -1,8 +1,8 @@
 import React from "react";
+import contactItem from "./contactItem.css";
 
 //В клас based компонент також приходять props
 class ContactItem extends React.Component{
-
 
 state={
     name:this.props.name,
@@ -16,14 +16,17 @@ state={
 
 render(){
   
-const {name,role,avatar,created,status,email,gender} = this.state;
+    const { avatar, role, name, email, created, gender } = this.state;
+    const { status } = this.props;// Сюди status прийшов тільки в props-ах, тому робимо деструктеризацію саме з props а не зі state
+
+    const { onStatusChange } = this.props;// Відловлюємо функцію з props
+    const {onDelete} = this.props
 
 /*Тут формується аватарка(картинка) в залежності від параметрів які в неї приходить gender(men or women) і номер картинки(avatar) */
 const URL =  `https://api.randomuser.me/portraits/${gender}/${avatar}.jpg`;
 
 /*Кольорове оформлення поля Status в залежності від статусу(active,inactive,banned etc).Цю річ робимо замінюючи стилі */
 let statusStyle = "label label-default";
-
 if(status ==="Active"){
     statusStyle = "label label-success";
 }else if(status === "Inactive"){
@@ -46,7 +49,8 @@ if(status ==="Active"){
                                   {created}
                                   </td>
                                   <td className="text-center">
-                                      <span className={statusStyle}>{status}</span>
+                                      {/*Повісили подію onClick на кнопку(span) статус. При натисканні клікі буде спрацьовувати метод onStatusChange */}
+                                      <span className={statusStyle} onClick={onStatusChange}>{status}</span>
                                   </td>
                                   <td>
                                       <a href="#">{email}</a>
@@ -67,7 +71,7 @@ if(status ==="Active"){
                                       <a href="#" className="table-link danger">
                                           <span className="fa-stack">
                                               <i className="fa fa-square fa-stack-2x"></i>
-                                              <i className="fa fa-trash-o fa-stack-1x fa-inverse"></i>
+                                              <i className="fa fa-trash-o fa-stack-1x fa-inverse" onClick={onDelete}></i>
                                           </span>
                                       </a>
                                   </td>
