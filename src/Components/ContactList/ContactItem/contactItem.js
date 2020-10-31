@@ -1,5 +1,6 @@
 import React from "react";
 import contactItem from "./contactItem.css";
+import {Link} from "react-router-dom";
 
 //В клас based компонент також приходять props
 class ContactItem extends React.Component{
@@ -20,7 +21,8 @@ render(){
     const { status } = this.props;// Сюди status прийшов тільки в props-ах, тому робимо деструктеризацію саме з props а не зі state
 
     const { onStatusChange } = this.props;// Відловлюємо функцію з props
-    const {onDelete} = this.props
+    const {onDelete} = this.props;
+    const {OnDetail} = this.props;
 
 /*Тут формується аватарка(картинка) в залежності від параметрів які в неї приходить gender(men or women) і номер картинки(avatar) */
 const URL =  `https://api.randomuser.me/portraits/${gender}/${avatar}.jpg`;
@@ -56,18 +58,18 @@ if(status ==="Active"){
                                       <a href="#">{email}</a>
                                   </td>
                                   <td>
-                                      <a href="#" className="table-link">
+                                      <Link to="/detail" className="table-link" onClick={OnDetail}>
                                           <span className="fa-stack">
                                               <i className="fa fa-square fa-stack-2x"></i>
                                               <i className="fa fa-search-plus fa-stack-1x fa-inverse"></i>
                                           </span>
-                                      </a>
-                                      <a href="#" className="table-link">
+                                      </Link>
+                                      <Link to="/edit" className="table-link" onClick={this.props.onEdit}>
                                           <span className="fa-stack">
                                               <i className="fa fa-square fa-stack-2x"></i>
                                               <i className="fa fa-pencil fa-stack-1x fa-inverse"></i>
                                           </span>
-                                      </a>
+                                      </Link>
                                       <a href="#" className="table-link danger">
                                           <span className="fa-stack">
                                               <i className="fa fa-square fa-stack-2x"></i>

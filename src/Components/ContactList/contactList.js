@@ -4,7 +4,7 @@ import ContactItem from "./ContactItem/contactItem"
 //props - один з механізмів React, який приймає властивості. В цей компонет дані приходять в якості props-а
 /*Тут ми отримуємо відразу масив List за допомогою деструктеризації(отрмали масив в фігурних дужках {})  
 У фігурних дужках ми віловлюємо ті дані які передали в цей компонент з батьківського компонента index*/
-const ContactList =({List, onStatusChange,onDelete})=>{
+const ContactList =({List, onStatusChange,onDelete,OnDetail,onEdit})=>{
 /*Завдяки методу map() ми з масива contact передали дані в item зробивши цю змінну обєктом, тобто наче циклом перебрали масив 
 і сворили обєкти. Передавши дані contact в новостворені кючі item*/
 const item = List.map(item=>{
@@ -19,6 +19,8 @@ const item = List.map(item=>{
         gender={item.gender}
         onStatusChange={()=>onStatusChange(item.id)}//Отримали метод onStatusChange і передали його далі анонімною функцією,а в середині функції передаємо item.id. Це для того щоб визначати id того юзера по якому ми клікнули
         onDelete={()=>onDelete(item.id)}
+        OnDetail={()=>OnDetail(item.id)}
+        onEdit={()=>onEdit(item.id)}
 
         />)
     
