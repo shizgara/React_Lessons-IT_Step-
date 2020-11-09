@@ -15,127 +15,48 @@ import EditContact from "./Components/EditContact/editContact";
 
 class APP extends Component {// Створення Class компонент APP з наслідуванням React.Component
 
-componentDidMount(){
-	console.log('componentDidMount')
-}
-shouldComponentUpdate(prev,next){
-	console.log("shouldComponentUpdate");
-	console.log("prev",prev);
-	console.log("next",next);
-}
-componentDidUpdate(){
-	console.log('componentDidUpdate')
-}
-componentWillUnmount(){
-	console.log('componentWillUnmount')
-}
+DB_URL = "https://contact-list-front-end-a33c0.firebaseio.com/contacts.json";//Оголосили базуданих
 
 state = {
-  List: [
-	  {
-	  id:uuidv4(),
-	  name:"Mila Kunis",
-	  role:"Admin",
-	  avatar: "1",
-	  created:"2013/08/08",
-	  status:"Inactive",
-	  email:"mila@kunis.com",
-	  gender:"women"
-  },
-{
-	id:uuidv4(),
-	name:"George Clooney",
-	role:"Member",
-	avatar: "2",
-	created:"2013/08/12",
-	status:"Active",
-	email:"marlon@brando.com",
-	gender:"men"
-},
-{
-	id:uuidv4(),
-	name:"Ryan Gossling",
-	role:"Registered",
-	avatar: "3",
-	created:"2013/03/03",
-	status:"Banned",
-	email:"jack@nicholson",
-	gender:"men"
-},
-{
-	id:uuidv4(),
-	name:"Emma Watson",
-	role:"Registered",
-	avatar: "4",
-	created:"2004/01/24",
-	status:"Pending",
-	email:"humphrey@bogart",
-	gender:"women"
-},
-{
-	id:uuidv4(),
-	name:"Robert Downey Jr",
-	role:"Admin",
-	avatar: "5",
-	created:"2013/12/31",
-	status:"Active",
-	email:"spencer@tracy",
-	gender:"men"
-},
-{
-	id:uuidv4(),
-	name:"Mila Kunis",
-	role:"Admin",
-	avatar: "6",
-	created:"2013/08/08",
-	status:"Inactive",
-	email:"mila@kunis.com",
-	gender:"women"
-},
-{
-	id:uuidv4(),
-	name:"George Clooney",
-	role:"Member",
-	avatar: "8",
-	created:"2013/08/12",
-	status:"Active",
-	email:"marlon@brando.com",
-	gender:"men"
-},
-{
-	id:uuidv4(),
-	name:"Ryan Gossling",
-	role:"Registered",
-	avatar: "9",
-	created:"2013/03/03",
-	status:"Banned",
-	email:"jack@nicholson",
-	gender:"men"
-},
-{
-	id:uuidv4(),
-	name:"Emma Watson",
-	role:"Registered",
-	avatar: "9",
-	created:"2004/01/24",
-	status:"Pending",
-	email:"humphrey@bogart.com",
-	gender:"women"
-},
-{
-	id:uuidv4(),
-	name:"Robert Downey Jr",
-	role:"Admin",
-	avatar: "10",
-	created:"2013/12/31",
-	status:"Active",
-	email:"spencer@tracy",
-	gender:"men"
-},
-],
+  List: [],
 detailList:"",
 currentContact:"",
+searchList:"",
 };
+
+/*В методі componentDidMount(це вбудований метод і він спрацьовує коли всі компоненти розгорнуті, тобто прорендерені) ми запускаємо метод updateData() і отримуємо дані з БД*/
+componentDidMount(){
+this.updateData();
+}
+
+/*Отримуємо дані з БД. fetch по замовчуванню має метод GET. Підставляємо в нього шлях до бази(DB_URL) і отримуємо json файл. В наступному then записуємо отримані дані в State, тобто в List */
+async updateData(){
+	await fetch(this.DB_URL).then(responce=>{
+		return responce.json();
+	}).then(data=>{
+		if(data == null){//Тут робимо перевірку, якщо в БД немає значень в state передаємо пустий масив
+			this.setState({
+				List:[]
+			})
+		}else{
+		this.setState({
+			List:data
+		})}
+	}).catch(err=>console.log(err))
+}
+
+
+/*Метод для збереження даних в БД. Даний метод робимо асинхронний. Тобто поки дані не запишуються, рендер не відбудеться */
+async onSaveData(List){
+await fetch(this.DB_URL, {
+	method:"PUT",
+	headers:{//Заголовки протокола HTTP
+		"Content-Type": "application/json"//Ми поміщаємо тип контенту
+	},
+	body: JSON.stringify(List),//В body ми передаємо контент який ми хочемо відправити.Методом JSON.stringify переводимо List з обєкта в JSON формат
+})
+}
+
 //Метод для зміни статуса користувача в контактлісті по кліку. id - id юзера по якому нажали.
 onStatusChange = (id) => {
 //Присвоїли змінній порядковий номер(індекс) контакту в масиві. Метод findIndex() повертає індекс першого елемента у масиві, який задовольняє надану перевірочну функцію
@@ -155,7 +76,7 @@ onStatusChange = (id) => {
       case "Banned":
         tmpList[index].status = "Active";
     }
-
+this.onSaveData(tmpList);
     this.setState({//setState - метод який міняє state
       List: tmpList,
     });
@@ -165,7 +86,8 @@ onStatusChange = (id) => {
   onDelete=(id)=>{
 	const index = this.state.List.findIndex((elem) => elem.id === id);
 	const tmpList = this.state.List.slice();
-	tmpList.splice(index,1)
+	tmpList.splice(index,1);
+	this.onSaveData(tmpList);//Викликаємо метод onSaveData що зберегти в БД новий State
 	console.log("Deleted==>>",this.state.List[index].name);
 	this.setState({
 		List: tmpList,
@@ -199,8 +121,9 @@ let newDate =new Date().getFullYear() + "/" +  new Date().getMonth() + "/" + new
 	};
 	console.log("newContact==>>", newContact)
 
-    const newList = [...this.state.List, newContact];//Спред оператором розгорнули state і записали його в новий масив, а також добавили новий контакт
-    this.setState(() => {
+    const newList = [...this.state.List, newContact];//Спред оператором розгорнули state і записали його в новий масив, а також добавили новий контакт в кінець масиву новогоствореного
+	this.onSaveData(newList);//Під час додавання нового користувача в список ми передаємо в БД ново створений список
+	this.setState(() => {
       return {
         List: newList,
       };
@@ -214,7 +137,7 @@ let newDate =new Date().getFullYear() + "/" +  new Date().getMonth() + "/" + new
 	this.setState({currentContact:editContact});
   }
 
-
+/*В даному методі ми прийняли всі дані з роута EditContact при натисканні на кнопку SAVE в form. Створили новий обєкт(контакт) і вписали внього отримані дані */
 onEditCurrentContact=(name, role, avatar, status, email, gender, created, id)=>{
 	let newContact = {
 		id: id,
@@ -226,13 +149,26 @@ onEditCurrentContact=(name, role, avatar, status, email, gender, created, id)=>{
 		email: email,
 		gender: gender,
 	  };
-	  const index = this.state.List.findIndex((elem) => elem.id === id);
+	  const index = this.state.List.findIndex((elem) => elem.id === id);//По id вичислили який контакт редагуємо. Методом findIndex визначили його індекс в масиві
 	 const partOne = this.state.List.slice(0,index);//Скопіювали всі елементи масива від індекса 0 до індекса "index"
 	 const partTwo = this.state.List.slice(index+1);//Скопіювали всі елементи масива від індекса "index" до кінця кінця масива
 	 const newList = [...partOne, newContact, ...partTwo];//в новий масив розгорнули масив partOne, потім редагований елемент, а потім масиви partTwo 
+	 this.onSaveData(newList);//Під час редагування користувача ми передаємо в БД ново створений список
 	this.setState({List: newList});
 }
   
+onSearch=(serchText)=>{
+	// console.log(serchText);
+	this.setState({
+		searchList:this.state.List.filter(list=>
+			list.name.toLowerCase().includes(serchText.toLowerCase())
+			// console.log(list)
+		)	
+	})
+	console.log(this.state.searchList)
+}
+
+
 
 //В компонент ContactList передаємо створену змінну contact в яку перенесли дані з масива List
   render(){
@@ -240,7 +176,7 @@ onEditCurrentContact=(name, role, avatar, status, email, gender, created, id)=>{
     return(
 		/* Підключення Router. Це фрагмент вищого порядку*/
 		<Router>
-        <Header />{/*Header поза switch бо він має бути на будь-якій сторінці */}
+        <Header onSearch={this.onSearch} />{/*Header поза switch бо він має бути на будь-якій сторінці */}
 		{/* Switch компонент для для переключення між маршрутами(роутами)*/}
         <Switch>
 			{/* Створили route-маршрут.path - вказує шлях маршруту.render - відмальовує компонент. exact - параметр для того щоб роутер шукав повне співпадіння шляху(посилання) в параметрі path*/}

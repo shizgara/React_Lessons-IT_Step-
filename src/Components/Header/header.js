@@ -3,7 +3,15 @@ import { Link } from "react-router-dom";// Підключаємо бібліот
 import "./header.css";
 
 class Header extends React.Component {
+
+  findText=(e)=>{
+// alert(e.target.value);
+// console.log("props header",this.props)
+this.props.onSearch(e.target.value);
+  }
+
   render() {
+    
     return (
       <div className="container">
         <div className="row">
@@ -48,6 +56,7 @@ class Header extends React.Component {
                       type="text"
                       class="form-control"
                       placeholder="Search"
+                      onChange={this.findText}
                     />
                   </div>
                   <button type="submit" class="btn btn-default">

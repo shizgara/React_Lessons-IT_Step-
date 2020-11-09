@@ -58,7 +58,7 @@ class EditContact extends React.Component {
   onSendData = (event) => {
     event.preventDefault();//Відмовляємося від стандатної поведінки елемента, тобто form нікуди не буде намагатися відправити дані при натискані на кнопку
     const { name, role, avatar, status, email, gender, id, created } = this.state;//Провели деструктеризацію
-    this.props.onEditCurrentContact(name, role, avatar, status, email, gender, created, id);//З props відловили метод onCreate і передали в нього всі дані
+    this.props.onEditCurrentContact(name, role, avatar, status, email, gender, created, id);//З props відловили метод onEditCurrentContact і передали в нього всі дані
     this.setState({//Після того як дані збереглися змінюємо значення ключа isRedirect в state
       isRedirect: true,
     });

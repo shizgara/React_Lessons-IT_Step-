@@ -5,6 +5,28 @@ import {Link} from "react-router-dom";
 //В клас based компонент також приходять props
 class ContactItem extends React.Component{
 
+
+    // /* Елементи життєвого циклу компонента*/
+    // componentDidMount(){
+    //     console.log('componentDidMount')//Метод який покахує що компонет змонтовано, в нашому випадку тут 10 записів і стейті і цей метод визветься 10 разів
+    // }
+    // shouldComponentUpdate(prev,next){//Метод який рожить через Ж. Треба розібратись
+    //     console.log("shouldComponentUpdate");
+    //     console.log("prev",prev);
+    //     console.log("next",next);
+    //     if(next.status == "Active"){
+    //         return false;
+    //     }
+    //     return true;
+    // }
+    // componentDidUpdate(){//Метод який спрацьовує коли пройшов апдейт стейта
+    //     console.log('componentDidUpdate')
+    // }
+    // componentWillUnmount(){// Метод який запускається коли  йде обновлення(редагування) стейта
+    //     console.log('componentWillUnmount')
+    // }
+
+
 state={
     name:this.props.name,
     role:this.props.role,
