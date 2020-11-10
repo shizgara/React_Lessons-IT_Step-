@@ -21,7 +21,7 @@ state = {
   List: [],
 detailList:"",
 currentContact:"",
-searchList:"",
+searchList:[],//масив для пошуку(searchlist)
 };
 
 /*В методі componentDidMount(це вбудований метод і він спрацьовує коли всі компоненти розгорнуті, тобто прорендерені) ми запускаємо метод updateData() і отримуємо дані з БД*/
@@ -41,7 +41,11 @@ async updateData(){
 		}else{
 		this.setState({
 			List:data
-		})}
+		})
+		this.setState({
+			searchList:data
+		})
+		}
 	}).catch(err=>console.log(err))
 }
 
@@ -156,7 +160,10 @@ onEditCurrentContact=(name, role, avatar, status, email, gender, created, id)=>{
 	 this.onSaveData(newList);//Під час редагування користувача ми передаємо в БД ново створений список
 	this.setState({List: newList});
 }
-  
+ 
+/* Метод для проведення пошуку. За допогомого метода filter перебираємо 
+існуючий List, і для кожного значення name всіх обєктів робимо порівняння зі словом(буквами) як прийшли методом onchange з поля Пошук. Всі дані які співпадають записуємо в масив
+searchList, який ми і передаємо в компонент contactList*/
 onSearch=(serchText)=>{
 	// console.log(serchText);
 	this.setState({
@@ -165,7 +172,8 @@ onSearch=(serchText)=>{
 			// console.log(list)
 		)	
 	})
-	console.log(this.state.searchList)
+	console.log(this.state.searchList);
+
 }
 
 
@@ -187,7 +195,7 @@ onSearch=(serchText)=>{
 				onStatusChange={this.onStatusChange}
 				 onDelete={this.onDelete}
 				 OnDetail={this.OnDetail}
-				   List={this.state.List}
+				   List={this.state.searchList}
 				   onEdit={this.onEdit} 
 				   />}
           />
